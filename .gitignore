@@ -98,3 +98,14 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Environment variables and secrets
+config.env
+.env
+.env.local
+.env.*.local
+
+# Firebase credentials
+*firebase-adminsdk*.json
+firebase-adminsdk*.json
+**/firebase-adminsdk*.json
