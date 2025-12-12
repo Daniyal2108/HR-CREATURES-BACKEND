@@ -55,14 +55,19 @@ exports.convertToEmployee = catchAsync(async (req, res, next) => {
   }
 
   // Create employee from result data
+  // Split fullName into firstName and lastName
+  const fullNameParts = result.fullName?.trim().split(' ') || [];
+  const firstName = fullNameParts[0] || 'N/A';
+  const lastName = fullNameParts.slice(1).join(' ') || fullNameParts[0] || 'N/A';
+
   const employeeData = {
     hr: user._id,
     company: companyId,
     department: result?.vacancy?.vacancyTemplate?.department?._id,
     vacancy: result.vacancy?._id,
     result: resultId,
-    firstName: result.fullName?.split(' ')[0] || '',
-    lastName: result.fullName?.split(' ').slice(1).join(' ') || '',
+    firstName: firstName,
+    lastName: lastName,
     email: result.email,
     phone: result.phone,
     age: result.age,
@@ -327,14 +332,19 @@ exports.bulkConvertToEmployee = catchAsync(async (req, res, next) => {
       continue; // Skip if already exists
     }
 
+    // Split fullName into firstName and lastName
+    const fullNameParts = result.fullName?.trim().split(' ') || [];
+    const firstName = fullNameParts[0] || 'N/A';
+    const lastName = fullNameParts.slice(1).join(' ') || fullNameParts[0] || 'N/A';
+
     const employeeData = {
       hr: user._id,
       company: companyId,
       department: result?.vacancy?.vacancyTemplate?.department?._id,
       vacancy: result.vacancy?._id,
       result: result._id,
-      firstName: result.fullName?.split(' ')[0] || '',
-      lastName: result.fullName?.split(' ').slice(1).join(' ') || '',
+      firstName: firstName,
+      lastName: lastName,
       email: result.email,
       phone: result.phone,
       age: result.age,
