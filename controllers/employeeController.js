@@ -27,38 +27,55 @@ exports.convertToEmployee = catchAsync(async (req, res, next) => {
   }
 
   if (result.status !== 'selected') {
-    return next(new AppError('Only selected candidates can be converted to employees', 400));
+    return next(
+      new AppError(
+        'Only selected candidates can be converted to employees',
+        400
+      )
+    );
   }
 
   // Check if employee already exists
   const existingEmployee = await Employee.findOne({ result: resultId });
   if (existingEmployee) {
-    return next(new AppError('Employee already exists for this candidate', 400));
+    return next(
+      new AppError('Employee already exists for this candidate', 400)
+    );
   }
 
   // Get company from HR user
   const hrUser = await User.findById(user._id).populate('company');
   let companyId = hrUser?.company?._id || hrUser?.company;
-  
+
   // If company not found in user, try to get from vacancy
   if (!companyId && result?.vacancy?.vacancyTemplate?.department) {
     const Department = require('../models/departmentModel');
-    const department = await Department.findById(result.vacancy.vacancyTemplate.department).populate('user');
+    const department = await Department.findById(
+      result.vacancy.vacancyTemplate.department
+    ).populate('user');
     if (department?.user?.company) {
-      const deptUser = await User.findById(department.user._id || department.user).populate('company');
+      const deptUser = await User.findById(
+        department.user._id || department.user
+      ).populate('company');
       companyId = deptUser?.company?._id || deptUser?.company;
     }
   }
 
   if (!companyId) {
-    return next(new AppError('Company not found. Please ensure your account is associated with a company.', 400));
+    return next(
+      new AppError(
+        'Company not found. Please ensure your account is associated with a company.',
+        400
+      )
+    );
   }
 
   // Create employee from result data
   // Split fullName into firstName and lastName
   const fullNameParts = result.fullName?.trim().split(' ') || [];
   const firstName = fullNameParts[0] || 'N/A';
-  const lastName = fullNameParts.slice(1).join(' ') || fullNameParts[0] || 'N/A';
+  const lastName =
+    fullNameParts.slice(1).join(' ') || fullNameParts[0] || 'N/A';
 
   const employeeData = {
     hr: user._id,
@@ -132,7 +149,13 @@ exports.getAllEmployees = catchAsync(async (req, res, next) => {
           .populate([
             { path: 'company' },
             { path: 'department' },
-            { path: 'vacancy', populate: { path: 'vacancyTemplate', populate: { path: 'department' } } },
+            {
+              path: 'vacancy',
+              populate: {
+                path: 'vacancyTemplate',
+                populate: { path: 'department' },
+              },
+            },
           ])
           .sort('-createdAt')
           .lean()
@@ -140,7 +163,13 @@ exports.getAllEmployees = catchAsync(async (req, res, next) => {
           .populate([
             { path: 'company' },
             { path: 'department' },
-            { path: 'vacancy', populate: { path: 'vacancyTemplate', populate: { path: 'department' } } },
+            {
+              path: 'vacancy',
+              populate: {
+                path: 'vacancyTemplate',
+                populate: { path: 'department' },
+              },
+            },
           ])
           .sort('-createdAt')
           .skip(skip)
@@ -150,7 +179,11 @@ exports.getAllEmployees = catchAsync(async (req, res, next) => {
   // Map department name
   const mappedDoc = doc.map((emp) => ({
     ...emp,
-    department: emp.department?.name || emp.vacancy?.vacancyTemplate?.department?.name || emp.department || 'N/A',
+    department:
+      emp.department?.name ||
+      emp.vacancy?.vacancyTemplate?.department?.name ||
+      emp.department ||
+      'N/A',
   }));
 
   const totalCount = await Employee.countDocuments(query);
@@ -335,7 +368,8 @@ exports.bulkConvertToEmployee = catchAsync(async (req, res, next) => {
     // Split fullName into firstName and lastName
     const fullNameParts = result.fullName?.trim().split(' ') || [];
     const firstName = fullNameParts[0] || 'N/A';
-    const lastName = fullNameParts.slice(1).join(' ') || fullNameParts[0] || 'N/A';
+    const lastName =
+      fullNameParts.slice(1).join(' ') || fullNameParts[0] || 'N/A';
 
     const employeeData = {
       hr: user._id,
@@ -375,4 +409,3 @@ exports.bulkConvertToEmployee = catchAsync(async (req, res, next) => {
     data: employees,
   });
 });
-
