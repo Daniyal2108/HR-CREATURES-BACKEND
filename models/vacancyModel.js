@@ -90,6 +90,9 @@ const VacancySchema = new mongoose.Schema(
       type: Number,
       default:10
     },
+    vacancyLink: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

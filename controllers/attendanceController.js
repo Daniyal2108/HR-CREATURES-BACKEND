@@ -84,6 +84,26 @@ exports.checkOut = catchAsync(async (req, res, next) => {
     return next(new AppError('Already checked out for today', 400));
   }
 
+  // Check minimum time requirement (30 minutes) before allowing checkout
+  if (attendance.checkIn) {
+    const checkInTime = moment(attendance.checkIn);
+    const checkOutTime = moment(now);
+    const minutesDiff = checkOutTime.diff(checkInTime, 'minutes');
+    
+    // Minimum 30 minutes required between check-in and check-out
+    const MINIMUM_MINUTES = 30;
+    
+    if (minutesDiff < MINIMUM_MINUTES) {
+      const remainingMinutes = MINIMUM_MINUTES - minutesDiff;
+      return next(
+        new AppError(
+          `You must work for at least ${MINIMUM_MINUTES} minutes before checking out. Please wait ${remainingMinutes} more minute(s).`,
+          400
+        )
+      );
+    }
+  }
+
   attendance.checkOut = now;
 
   // Calculate working hours

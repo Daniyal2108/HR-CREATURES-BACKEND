@@ -70,9 +70,23 @@ exports.addVacancy = catchAsync(async (req, res, next) => {
 
   const doc = await Vacancy.create({ ...obj, noOfParameters });
 
+  // Generate unique vacancy link
+  const vacancyNameForLink = foundVacancyTemplate?.name
+    ?.replace(/\s+/g, "-")
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "") || "vacancy";
+  const vacancyLink = `https://hr-creatures-mvp.vercel.app/vacancy/${vacancyNameForLink}/${doc._id}`;
+  
+  // Update vacancy with the link
+  const updatedDoc = await Vacancy.findByIdAndUpdate(
+    doc._id,
+    { vacancyLink },
+    { new: true }
+  ).populate({ path: 'vacancyTemplate' });
+
   res.status(201).json({
     status: 'success',
-    data: doc,
+    data: updatedDoc,
   });
 });
 
