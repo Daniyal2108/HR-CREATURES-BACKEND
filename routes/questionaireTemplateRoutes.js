@@ -6,12 +6,17 @@ const {
   updateQuestionaire,
   deleteQuestionaire,
   getMyQuestionaireTemplates,
-  getQuestionaireTemplateDetail
+  getQuestionaireTemplateDetail,
+  generateQuestionsWithAI
 } = require('../controllers/questionaireTemplateController');
 
 const router = express.Router();
 
 router.use(protect,restrictTo('hr'))
+
+router
+  .route('/generate-questions')
+  .post(generateQuestionsWithAI);
 
 router
   .route('/')
