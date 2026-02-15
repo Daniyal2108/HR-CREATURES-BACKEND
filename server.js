@@ -26,8 +26,11 @@ const DB = dbTemplate.includes('<PASSWORD>')
 if (!DB.startsWith('mongodb://') && !DB.startsWith('mongodb+srv://')) {
   console.error('Invalid DATABASE URI scheme. Check DATABASE env variable.');
 }
+console.log("RAW URI:", process.env.MONGODB_URI);
+console.log("TYPE:", typeof process.env.MONGODB_URI);
+console.log("LENGTH:", process.env.MONGODB_URI?.length);
 mongoose
-  .connect(process.env.MONGODB_URI, {
+  .connect("mongodb+srv://mvp-user:TaVumAGa82OFHIHo@cluster0.gxhnyhv.mongodb.net/hrmanagementmvpdb?retryWrites=true&w=majority", {
     useNewUrlParser:
       DB.startsWith('mongodb+srv://') || !DB.includes(','),
     useCreateIndex: true,
