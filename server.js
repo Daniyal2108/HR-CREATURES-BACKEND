@@ -15,9 +15,9 @@ const dbTemplate = process.env.DATABASE || '';
 const DB = dbTemplate.replace('<PASSWORD>', dbPassword);
 mongoose
   .connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
+    // useNewUrlParser: true,
+    // useCreateIndex: true,
+    // useFindAndModify: false,
     useUnifiedTopology: true,
   })
   .then(() => {
