@@ -33,9 +33,9 @@ module.exports = class Email {
     // Sendgrid
     return nodemailer.createTransport({
       service: 'gmail',
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
+      // host: 'smtp.gmail.com',
+      // port: 465,
+      // secure: true,
       auth: {
         user: 'dk2527689@gmail.com',
         pass: 'egwd gofp ymjt qpii',
