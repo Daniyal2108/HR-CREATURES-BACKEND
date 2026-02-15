@@ -10,8 +10,8 @@ process.on('uncaughtException', (err) => {
 dotenv.config({ path: './config.env' });
 const app = require('./app');
 
-const dbPassword = encodeURIComponent(process.env.DATABASE_PASSWORD || '');
-const dbTemplate = process.env.DATABASE || '';
+const dbPassword = encodeURIComponent("TaVumAGa82OFHIHo" || '');
+const dbTemplate = "mongodb+srv://mvp-user:<PASSWORD>@cluster0.gxhnyhv.mongodb.net/hrmanagementmvpdb?retryWrites=true&w=majority" || '';
 const DB = dbTemplate.replace('<PASSWORD>', dbPassword);
 mongoose
   .connect(DB, {
