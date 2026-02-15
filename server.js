@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+const dotenv = require('dotenv').config();
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...', err);
@@ -27,7 +27,7 @@ if (!DB.startsWith('mongodb://') && !DB.startsWith('mongodb+srv://')) {
   console.error('Invalid DATABASE URI scheme. Check DATABASE env variable.');
 }
 mongoose
-  .connect(DB, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser:
       DB.startsWith('mongodb+srv://') || !DB.includes(','),
     useCreateIndex: true,
