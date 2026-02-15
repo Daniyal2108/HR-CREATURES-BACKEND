@@ -498,7 +498,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     }
 
     // 3) Send it to user's email
-    const url = `https://recruito.hrcreatures.com/forget-password/set-password/${user?._id}`;
+    const url = `https://hr-creatures-mvp.vercel.app/forget-password/set-password/${user?._id}`;
 
     await new Email(user, url, 'support').sendPasswordReset();
 
@@ -525,6 +525,7 @@ exports.resetPasswordDone = catchAsync(async (req, res, next) => {
   }
   user.password = password;
   user.passwordConfirm = passwordConfirm;
+  user.isPasswordGenerated = true;
 
   await user.save();
 
