@@ -10,11 +10,22 @@ process.on('uncaughtException', (err) => {
 dotenv.config({ path: './config.env' });
 const app = require('./app');
 
-const dbPassword = encodeURIComponent(process.env.DATABASE_PASSWORD || '');
-const dbTemplate = process.env.DATABASE || '';
+const sanitizeEnvValue = (value) =>
+  String(value || '')
+    .trim()
+    .replace(/^['"]|['"]$/g, '');
+
+const dbPassword = encodeURIComponent(
+  sanitizeEnvValue(process.env.DATABASE_PASSWORD)
+);
+const dbTemplate = sanitizeEnvValue(process.env.DATABASE);
 const DB = dbTemplate.includes('<PASSWORD>')
   ? dbTemplate.replace('<PASSWORD>', dbPassword)
   : dbTemplate;
+
+if (!DB.startsWith('mongodb://') && !DB.startsWith('mongodb+srv://')) {
+  console.error('Invalid DATABASE URI scheme. Check DATABASE env variable.');
+}
 mongoose
   .connect(DB, {
     useNewUrlParser:
