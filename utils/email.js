@@ -1,7 +1,10 @@
 const nodemailer = require('nodemailer');
 const pug = require('pug');
-const ejs = require('ejs');
 const htmlToText = require('html-to-text');
+const { Resend } = require('resend');
+
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = new Resend('re_iEkzwDEW_DTDLERQkdsjzfPiY9FQcKNWv');
 
 module.exports = class Email {
   constructor(user, url, emailFrom) {
@@ -30,16 +33,20 @@ module.exports = class Email {
   // }
 
   newTransport() {
-    // Sendgrid
+    const host = process.env.EMAIL_HOST;
+    const port = Number(process.env.EMAIL_PORT || 587);
+    const user = process.env.EMAIL_USERNAME;
+    const pass = process.env.EMAIL_PASSWORD;
+    const secure = port === 465;
+
     return nodemailer.createTransport({
-      service: 'gmail',
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: 'dk2527689@gmail.com',
-        pass: 'egwd gofp ymjt qpii',
-      },
+      host,
+      port,
+      secure,
+      auth: user && pass ? { user, pass } : undefined,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 20000,
     });
   }
 
@@ -63,7 +70,21 @@ module.exports = class Email {
       text: htmlToText.fromString(html),
     };
 
-    // 3) Create a transport and send email
+    // 3) Send email (prefer Resend if configured)
+    if (resend) {
+      console.log('resend se ai h')
+      try {await resend.emails.send({
+        from: 'Acme <onboarding@resend.dev>',
+        to: [this.to],
+        subject,
+        html,
+        text: htmlToText.fromString(html),
+      })} catch (error) {
+        console.log(error);
+      }
+      return;
+    }
+
     await this.newTransport().sendMail(mailOptions);
     console.log('in1');
   }
