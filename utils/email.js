@@ -30,16 +30,20 @@ module.exports = class Email {
   // }
 
   newTransport() {
-    // Sendgrid
+    const host = process.env.EMAIL_HOST;
+    const port = Number(process.env.EMAIL_PORT || 587);
+    const user = process.env.EMAIL_USERNAME;
+    const pass = process.env.EMAIL_PASSWORD;
+    const secure = port === 465;
+
     return nodemailer.createTransport({
-      service: 'gmail',
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: true,
-      auth: {
-        user: 'dk2527689@gmail.com',
-        pass: 'egwd gofp ymjt qpii',
-      },
+      host,
+      port,
+      secure,
+      auth: user && pass ? { user, pass } : undefined,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 20000,
     });
   }
 
