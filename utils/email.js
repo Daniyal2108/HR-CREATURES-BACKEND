@@ -37,8 +37,8 @@ module.exports = class Email {
       port: 587,
       secure: true,
       auth: {
-        user: 'daniyalk@vinncorp.com',
-        pass: 'cayl heau nzjo gwcz',
+        user: 'dk2527689@gmail.com',
+        pass: 'egwd gofp ymjt qpii',
       },
     });
   }
